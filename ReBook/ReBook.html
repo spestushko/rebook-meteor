@@ -1,0 +1,89 @@
+<head>
+    <title>Re-Book</title>
+</head>
+
+<body>
+<nav>
+    <ul>
+        <li>
+            <a href="/">Home</a>
+        </li>
+        <li>
+            <a href="/sell">Sell</a>
+        </li>
+        <li>
+            <a href="/buy">Buy</a>
+        </li>
+    </ul>
+</nav>
+</body>
+<!--
+*****************
+BUY VIEW
+*****************
+-->
+<template name="buyView">
+    <div class="container">
+        <header>
+            {{> loginButtons}}
+            <h1>Welcome to Re-Book web service: Buy page</h1>
+        </header>
+        <ul>
+            {{#each posts}}
+                {{> post}}
+            {{/each}}
+        </ul>
+    </div>
+</template>
+
+<!--
+*****************
+SELL VIEW
+*****************
+-->
+<template name="sellView">
+    <div class="container">
+        <header>
+            {{> loginButtons}}
+            <h1>Welcome to Re-Book web service: Sell page</h1>
+        </header>
+        {{#autoForm collection="Posts" id="sellView" type="insert"}}
+            <fieldset>
+                <legend>Add a Book</legend>
+                {{> afQuickField name='isbn'}}
+                {{> afQuickField name='title'}}
+                {{> afQuickField name='author'}}
+                {{> afQuickField name='summary' rows=6}}
+                {{> afQuickField name='cost'}}
+            </fieldset>
+            <button type="submit" class="btn btn-primary">Insert</button>
+        {{/autoForm}}
+    </div>
+</template>
+
+<!--
+*****************
+MAIN VIEW
+*****************
+-->
+<template name="mainView">
+    <div class="container">
+        <header>
+            {{> loginButtons}}
+            <h1>Welcome to Re-Book web service: Main page</h1>
+        </header>
+    </div>
+</template>
+
+<template name="post">
+    <li>
+        Book post<br/>
+        isbn   : {{isbn}}   <br/>
+        title  : {{title}}  <br/>
+        author : {{author}} <br/>
+        summary: {{summary}}<br/>
+        cost   : {{cost}}$  <br/>
+    </li>
+</template>
+
+
