@@ -1,5 +1,13 @@
 Posts = new Meteor.Collection('Posts');
 
+//SECURITY - Allow Callbacks for posting
+Posts.allow({
+  insert: function(userId, doc) {
+    // only allow posting if you are logged in
+    return !! userId;
+  },
+});
+
 // MongoDb schema
 Posts.attachSchema(new SimpleSchema({
   title: {
@@ -30,14 +38,37 @@ Posts.attachSchema(new SimpleSchema({
     max: 10000,
     decimal: true,
   },
+  // *** EMAIL DOES NOT GET VALIDATED
+  email:{
+    type: String,
+    label: "Email",
+  },
   createdBy: {
     type: String,
-    autoValue:function(){ return this.userId }
+    autoValue: function(){ return Meteor.userId() }
+  },
+  username: {
+    type: String,
+    autoValue: function(){ return Meteor.user().username }
+  },
+  createdAt: {
+    type: Date,
+    autoValue: function(){ return new Date(); }
   },
 }));
 
+if (Meteor.isServer) {
+  // This code only runs on the server
+  Meteor.publish("Posts", function () {
+    return Posts.find();
+  });
+}
+
 // Code, that runs only on the client side of an application
 if (Meteor.isClient){
+
+  // Subscribing for posts
+  Meteor.subscribe('Posts');
 
   /* *******
    * Routing
@@ -57,9 +88,28 @@ if (Meteor.isClient){
   /* *******
    * Helpers
    * */
+  // Buy view helper
   Template.buyView.helpers({
+    // Return all the posts from DB
     posts: function () {
-      return Posts.find({});
+      return Posts.find({}, {sort: {createdAt: -1}});
+    },
+    // Counter to show all the books in the DB
+    booksCounter: function(){
+      return Posts.find({}).count();
+    },
+    isOwner: function () {
+      return this.createdBy === Meteor.userId();
+    }
+  });
+
+  /* *******
+   * Events
+   * */
+  // Buy view events
+  Template.buyView.events({
+    'click .delete': function () {
+      Meteor.call("deletePost", this._id);
     }
   });
 
@@ -70,4 +120,20 @@ if (Meteor.isClient){
     passwordSignupFields: "USERNAME_ONLY"
   });
 }
+
+/*
+* Meteor methods adding
+* */
+Meteor.methods({
+  deletePost: function (postId) {
+    var post = Posts.findOne(postId);
+    if (post.createdBy !== Meteor.userId()) {
+      // If the task is private, make sure only the owner can delete it
+      throw new Meteor.Error("not-authorized");
+    }
+
+    // If user is the owner, then delete post
+    Posts.remove(postId);
+  }
+});
 

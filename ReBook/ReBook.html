@@ -26,7 +26,7 @@ BUY VIEW
     <div class="container">
         <header>
             {{> loginButtons}}
-            <h1>Welcome to Re-Book web service: Buy page</h1>
+            <h1>Welcome to Re-Book web service: Buy page.<br> Total listings: {{booksCounter}}</h1><br/>
         </header>
         <ul>
             {{#each posts}}
@@ -55,6 +55,7 @@ SELL VIEW
                 {{> afQuickField name='author'}}
                 {{> afQuickField name='summary' rows=6}}
                 {{> afQuickField name='cost'}}
+                {{> afQuickField name='email'}}
             </fieldset>
             <button type="submit" class="btn btn-primary">Insert</button>
         {{/autoForm}}
@@ -77,12 +78,15 @@ MAIN VIEW
 
 <template name="post">
     <li>
-        Book post<br/>
-        isbn   : {{isbn}}   <br/>
-        title  : {{title}}  <br/>
-        author : {{author}} <br/>
-        summary: {{summary}}<br/>
-        cost   : {{cost}}$  <br/>
+        <strong>Book post</strong><br/>
+        isbn    : {{isbn}}    <br/>
+        title   : {{title}}   <br/>
+        author  : {{author}}  <br/>
+        summary : {{summary}} <br/>
+        cost    : {{cost}}$   <br/>
+        email   : {{email}}   <br/>
+        username: {{username}}<br/>
+        <button class="delete">&times;</button>
     </li>
 </template>
 
